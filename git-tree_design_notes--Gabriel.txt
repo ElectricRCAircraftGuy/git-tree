@@ -1,0 +1,36 @@
+
+GS
+19-22 Mar. 2020 
+
+USE *PYTHON* AS THE PROGRAMMING LANGUAGE OF CHOICE! <=========
+-perhaps a bash wrapper around git here and there, but plan on using PYTHON for the most part!
+
+Idea Reference:  
+https://stackoverflow.com/questions/54227968/whats-the-difference-between-arc-graft-and-arc-patch/54231342#54231342  
+- This program (`git-tree`) will replace both `arc flow` and `arc cascade` referenced above.
+
+See also `man git branch` for details on how to make these commands more "git-like", since I ultimately want to merge this into git itself!
+
+Branch descriptions in git:
+1. https://ericjmritz.wordpress.com/2015/11/13/using-branch-descriptions-in-git/
+1. https://stackoverflow.com/questions/2108405/branch-descriptions-in-git
+
+Commands to implement:
+
+    git tree -u upstream_branch = set upstream_branch to become the tree upstream of current branch. 
+        This could be implemented as follows in order to make an entry for this branch into the local ".git/config" file:
+            git config branch.name_of_branch.git-tree-upstream "name_of_branch"
+        To recall the setting to see what the git-tree-upstream branch is set to, do this:
+            git config branch.name_of_branch.git-tree-upstream
+    git tree --set-upstream upstream_branch = same as above
+    git tree branch_name -u upstream_branch = set upstream_branch as tree upstream of branch_name
+    git tree branch_name --set-upstream upstream_branch = same as above
+    git tree --unset-upstream = unset the tree upstream of the current branch
+    git tree branch_name --unset-upstream = unset the tree upstream of branch_name
+    git tree = same as `arc flow`
+    git tree branch_name = show the downstream tree (`arc flow`) starting with branch_name as root, rather than showing the entire tree
+    git tree -b branch_name = create and checkout a new branch called branch_name, from the current branch, with the current branch set as the tree upstream; same as `git checkout -b branch_name && git tree -u branch_prior_to_checkout`
+    git tree --cascade = same as `arc cascade`, starting from current branch
+    git tree branch_name --cascade = same as `arc cascade`, but starting from branch_name
+
+

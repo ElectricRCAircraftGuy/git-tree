@@ -4,7 +4,7 @@
 This file is part of git-tree: https://github.com/ElectricRCAircraftGuy/git-tree
 Author: Gabriel Staples
 
-References:
+REFERENCES:
 
 Here's a few of my own Python code samples (previous projects) I am looking at to remind myself how to write
 Python:
