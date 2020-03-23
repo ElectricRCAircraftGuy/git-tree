@@ -112,33 +112,55 @@ class Tree:
         # A dictionary to map from a node name to a node
         self.nodeMap = {}
 
-    def addNode(name, parentName = None):
+    def addNode(self, name, parent = None):
         """
         Create a new node and add it to the tree; note that a parent MUST be created before a child or else 
         an error will occur
 
         Parameters:
-            name (string):        the name of this node; must be a unique name from all other nodes!
-            parentName (string):  the *name* of the parent node for the node being created; this node must 
-                                  already exist in the tree! In other words, add all parent nodes FIRST, and
-                                  *then* their children! ########### NEED TO COME BACK TO THIS--MAY NOT WORK FOR MY
-                                  INTENDED git-tree USAGE!
+            name (string):      the name of this node; must be a unique name from all other nodes!
+            parent (string):    the *name* of the parent node for the node being created; this node must 
+                                already exist in the tree! In other words, add all parent nodes FIRST, and
+                                *then* their children! ########### NEED TO COME BACK TO THIS--MAY NOT WORK FOR MY
+                                INTENDED git-tree USAGE!
         Returns:
             NA
         """
         
         # Obtain the parent node using the parent node name if the parent node exists
         parentNode = None
-        if (parentName is not None):
-            if (not parentName in self.nodeMap):
-                logging.error('Error: parent node must be created first!')
+        if (parent is not None):
+            if (not parent in self.nodeMap):
+                logging.error('Error: parent node must be created first! name = {}; parent = {}'.format(name, parent))
                 return
             else:
-                parentNode = self.nodeMap[parentName]
+                parentNode = self.nodeMap[parent]
         newNode = Node(name, parentNode)
+        # add the newly-created node to the node map and node list
+        self.nodeMap[name] = newNode 
         self.nodes.append(newNode)
 
+    def printChildren(self):
+        """
+        Print the names of all of the children of each node in this tree
+        
+        Parameters:
+            None
+        Returns:
+            None
+        """
+        for node in self.nodes:
+            node.printChildren()
+
     def printTree(self):
+        """
+        Graphically print the tree
+        
+        Parameters:
+            None
+        Returns:
+            None
+        """
         pass
 
     def cascade(self):
@@ -151,8 +173,8 @@ def tests():
     """
     
     # See if I can duplicate this: https://anytree.readthedocs.io/en/latest/
-    # WORKS!
-    print('=== Test 1 ===')
+    
+    print('=== Test 1 ===') # WORKS!
     
     udo = Node("Udo")
     marc = Node("Marc", parent=udo)
@@ -170,10 +192,17 @@ def tests():
     jan.printChildren()
     joe.printChildren()
     
-    print('\n=== Test 2 ===')
+    print('\n=== Test 2 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
     
     tree = Tree()
-    tree.addNode("Udo", parentName)
+    tree.addNode("Udo")
+    tree.addNode("Marc", parent="Udo")
+    tree.addNode("Lian", parent="Marc")
+    tree.addNode("Dan", parent="Udo")
+    tree.addNode("Jet", parent="Dan")
+    tree.addNode("Jan", parent="Dan")
+    tree.addNode("Joe", parent="Dan")
+    tree.printChildren()
 
 def main():
     logging.debug('Running main.')
