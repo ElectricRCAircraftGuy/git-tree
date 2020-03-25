@@ -19,6 +19,15 @@ Python Docstrings:
 1. https://www.geeksforgeeks.org/python-docstrings/
 2. https://stackoverflow.com/questions/3898572/what-is-the-standard-python-docstring-format
 
+Set:
+1. https://docs.python.org/3/library/stdtypes.html#set
+1. https://stackoverflow.com/questions/42344521/make-dictionary-with-only-keys/42344605#42344605
+
+Datastructures & Lists:
+1. https://docs.python.org/3/tutorial/datastructures.html
+
+Sample tree:
+1. https://anytree.readthedocs.io/en/latest/
 
 """
 
@@ -32,7 +41,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s | %(levelname)s | %
 class Node:
     """
     Nodes in a tree. Each node consists of a *single parent* and a *list of children*. It has no limit on the number
-    of children it can have. 
+    of children it can have. Circular relationships are not allowed: one of a node's children cannot also be
+    that node's parent.
     """
     
     def __init__(self, name, parent = None):
@@ -48,9 +58,16 @@ class Node:
             NA
         """
 
+        # 1st, initialize class variables
         self.name = name
-        self.children = [] # initialize with an empty list of children
         self.parent = None # must be initialized before calling setParent() the very 1st time
+        # This list contains the children in the *order* they are added; initialize with an empty list of children
+        self.orderedChildren = [] 
+        # This unordered set also contains all the children, and is useful to see in O(1) time if a certain child 
+        # belongs to a node, to prevent circular relationships
+        self.unorderedChildren = set()
+
+        # 2nd, *then* make function calls!
         self.setParent(parent)
 
     def setParent(self, parent):
@@ -62,6 +79,12 @@ class Node:
         Returns:
             None
         """
+        
+        # Don't allow a node to set its parent as one of its children!
+        if (parent in self.unorderedChildren):
+            logging.error("Node.setParent: cannot set a node's child to be its own parent! node = {}; parent = {}"
+                          .format(self.name, parent.name))
+            return
         
         # 1st, remove this child from its current parent
         if (self.parent is not None):
@@ -83,8 +106,8 @@ class Node:
         """
 
         print("Printing {}'s children:".format(self.name))
-        if (self.children):
-            for child in self.children:
+        if (len(self.orderedChildren) != 0):
+            for child in self.orderedChildren:
                 print(child.name)
         else:
             # no children
@@ -103,10 +126,11 @@ class Node:
             None
         """
         if (child is None):
-            logging.error('Error: __addChild: child must NOT be "None"')
+            logging.error('Node.__addChild: child must NOT be "None"')
             return
         
-        self.children.append(child)
+        self.orderedChildren.append(child)
+        self.unorderedChildren.add(child)
         
     def __removeChild(self, child):
         """
@@ -122,10 +146,11 @@ class Node:
         """
 
         if (child is None):
-            logging.error('Error: __removeChild: child must NOT be "None"')
+            logging.error('Node.__removeChild: child must NOT be "None"')
             return
 
-        self.children.remove(child)
+        self.orderedChildren.remove(child)
+        self.unorderedChildren.remove(child)
         
 # end of class Node
 
@@ -179,7 +204,8 @@ class Tree:
         # Each node name can only exist *once* in the tree, so first check to make sure this node name isn't already
         # in the tree!
         if (name in self.nodeMap):
-            logging.error('Error: this node is already in the tree! name = {}; parent = {}'.format(name, parent))
+            logging.error('Tree.addOrUpdateNode: this node is already in the tree! name = {}; parent = {}'
+                          .format(name, parent))
             return
         
         # Create the parent node if it doesn't exist
@@ -188,7 +214,8 @@ class Tree:
         parentNode = None
         if (parent is not None):
             if (not parent in self.nodeMap):
-                logging.error('Error: parent node must be created first! name = {}; parent = {}'.format(name, parent))
+                logging.error('Tree.addOrUpdateNode: parent node must be created first! name = {}; parent = {}'
+                              .format(name, parent))
                 return
             else:
                 parentNode = self.nodeMap[parent]
@@ -256,6 +283,12 @@ def tests():
     jan.setParent(None)
     dan.printChildren()
     jan.printChildren()
+    
+    print('\n=== Test 3 ===')
+    
+    # Ensure nodes don't allow circular dependencies:
+    # Jet is Dan's child, so try to make Jet Dan's parent and ensure this fails:
+    dan.setParent(jet)
     
 #     print('\n=== Test 3 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
 #     
