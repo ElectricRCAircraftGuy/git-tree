@@ -210,17 +210,17 @@ def tests():
     jan.printChildren()
     joe.printChildren()
     
-    print('\n=== Test 2 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
-    
-    tree = Tree()
-    tree.addOrUpdateNode("Udo")
-    tree.addOrUpdateNode("Marc", parent="Udo")
-    tree.addOrUpdateNode("Lian", parent="Marc")
-    tree.addOrUpdateNode("Dan", parent="Udo")
-    tree.addOrUpdateNode("Jet", parent="Dan")
-    tree.addOrUpdateNode("Jan", parent="Dan")
-    tree.addOrUpdateNode("Joe", parent="Dan")
-    tree.printChildren()
+#     print('\n=== Test 2 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
+#     
+#     tree = Tree()
+#     tree.addOrUpdateNode("Udo")
+#     tree.addOrUpdateNode("Marc", parent="Udo")
+#     tree.addOrUpdateNode("Lian", parent="Marc")
+#     tree.addOrUpdateNode("Dan", parent="Udo")
+#     tree.addOrUpdateNode("Jet", parent="Dan")
+#     tree.addOrUpdateNode("Jan", parent="Dan")
+#     tree.addOrUpdateNode("Joe", parent="Dan")
+#     tree.printChildren()
 
 def main():
     logging.debug('Running main.')
