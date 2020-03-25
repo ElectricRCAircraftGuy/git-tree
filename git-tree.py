@@ -30,6 +30,11 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s | %(levelname)s | %(message)s')
 
 class Node:
+    """
+    Nodes in a tree. Each node consists of a *single parent* and a *list of children*. It has no limit on the number
+    of children it can have. 
+    """
+    
     def __init__(self, name, parent = None):
         """
         Constructor to create a new Node
@@ -96,6 +101,11 @@ class Node:
 # end of class Node
 
 class Tree:
+    """
+    A Tree consists of one or more Nodes (ideally 2+ or it's not really a tree) linked together via parent/child
+    relationships. No circular relationships are allowed: ie: a node's parent cannot be its child, grandchild, 
+    great grandchild, etc.
+    """
 
     def __init__(self):
         """
