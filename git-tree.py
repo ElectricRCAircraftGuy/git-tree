@@ -50,20 +50,26 @@ class Node:
 
         self.name = name
         self.children = [] # initialize with an empty list of children
+        self.parent = None # must be initialized before calling setParent() the very 1st time
         self.setParent(parent)
 
     def setParent(self, parent):
         """
-        Set or update the parent of this node
+        Set or update the parent of this node. Set parent to `None` to remove this node's parent.
 
         Parameters:
-            parent (Node):  the parent node of this node
+            parent (Node):  the parent node of this node; set to `None` to remove this node's parent
         Returns:
             None
         """
         
+        # 1st, remove this child from its current parent
+        if (self.parent is not None):
+            self.parent.__removeChild(self)
+        
+        # 2nd, set the new parent (setting to None is OK)
         self.parent = parent
-        if (parent is not None):
+        if (self.parent is not None):
             self.parent.__addChild(self)
 
     def printChildren(self):
@@ -88,16 +94,39 @@ class Node:
         """
         Add a child to this node's list of children. 
 
-        Details: This is a private method because the children should never be added externally. Rather, they
+        Details: This is a private method because the children should never be added externally/directly. Rather, they
         are only added internally to a parent when a parent is set.
 
         Parameters:
-            child (Node):  a child node to add to this node's list of children
+            child (Node):  a child node to add to this node's list of children; must NOT be None
+        Returns:
+            None
+        """
+        if (child is None):
+            logging.error('Error: __addChild: child must NOT be "None"')
+            return
+        
+        self.children.append(child)
+        
+    def __removeChild(self, child):
+        """
+        Remove a child from this node's list of children. 
+
+        Details: This is a private method because the children should never be removed externally/directly. 
+        Rather, they are only removed internally from a parent when a new parent is set.
+
+        Parameters:
+            child (Node):  a child node to remove from this node's list of children
         Returns:
             None
         """
 
-        self.children.append(child)
+        if (child is None):
+            logging.error('Error: __removeChild: child must NOT be "None"')
+            return
+
+        self.children.remove(child)
+        
 # end of class Node
 
 class Tree:
@@ -220,7 +249,15 @@ def tests():
     jan.printChildren()
     joe.printChildren()
     
-#     print('\n=== Test 2 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
+    print('\n=== Test 2 ===')
+    
+    # Now remove Jan's parent, and print Dan's children and Jan's children. Dan should show Jan is no longer
+    # a child, and Jan should still show no children.
+    jan.setParent(None)
+    dan.printChildren()
+    jan.printChildren()
+    
+#     print('\n=== Test 3 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
 #     
 #     tree = Tree()
 #     tree.addOrUpdateNode("Udo")
