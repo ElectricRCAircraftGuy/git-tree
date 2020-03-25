@@ -32,5 +32,6 @@ Commands to implement:
     git tree -b branch_name = create and checkout a new branch called branch_name, from the current branch, with the current branch set as the tree upstream; same as `git checkout -b branch_name && git tree -u branch_prior_to_checkout`
     git tree --cascade = same as `arc cascade`, starting from current branch
     git tree branch_name --cascade = same as `arc cascade`, but starting from branch_name
-
+    git tree --help = help menu to show all of these command options
+    git tree -h = same as above
 

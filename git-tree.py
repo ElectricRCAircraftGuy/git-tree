@@ -36,31 +36,30 @@ class Node:
 
         Parameters:
             name (string):  the name of this node
-            parent (Node):  the parent node of the node being created
+            parent (Node):  the parent node of the node being created; note: obviously the parent node must already
+                            exist in order to be passed in as a parameter here
+            
         Returns:
             NA
         """
 
         self.name = name
-        self.parent = parent
-        if (parent is not None):
-            self.parent.__addChild(self)
         self.children = [] # initialize with an empty list of children
+        self.setParent(parent)
 
     def setParent(self, parent):
         """
-        Set the parent of this node. 
-
-        Details: Use this in case you need to change the parent, as the original parent should always be 
-        set when you construct the Node.#############
+        Set or update the parent of this node
 
         Parameters:
-            parent (Node):  the parent node of the node being created
+            parent (Node):  the parent node of this node
         Returns:
             None
         """
-
+        
         self.parent = parent
+        if (parent is not None):
+            self.parent.__addChild(self)
 
     def printChildren(self):
         """
@@ -72,7 +71,7 @@ class Node:
             None
         """
 
-        logging.debug("Printing {}'s children:".format(self.name))
+        print("Printing {}'s children:".format(self.name))
         if (self.children):
             for child in self.children:
                 print(child.name)
@@ -107,25 +106,44 @@ class Tree:
         Returns:
             NA
         """
-        # List of all nodes
-        self.nodes = []
-        # A dictionary to map from a node name to a node
+        # List of all nodes in the tree
+        self.allNodes = []
+        # List of all nodes in the tree *in the order* the nodes were added via `addNode()`; this is different from
+        # the nodes contained in self.allNodes, and the order of the nodes in self.allNodes, because 
+        # self.allNodes also includes *parent nodes* that were added consequently since they were specified as 
+        # parameters passed to `addNode()` but they didn't already exist in the tree
+        self.orderedNodes = []
+        # A dictionary to map from a node name string to a node object; all nodes in the tree are in this
+        # dict, so you may use it to determine whether or not a node with a given name exists in the tree
         self.nodeMap = {}
 
-    def addNode(self, name, parent = None):
+    def addOrUpdateNode(self, name, parent = None):
         """
-        Create a new node and add it to the tree; note that a parent MUST be created before a child or else 
-        an error will occur
-
+        Add or update a node and its parent node, as required, to the tree.
+        
+        Details: If a node named "name" isn't already in the tree, create it and add it to the tree, setting its 
+        parent node as well. If the specified parent node doesn't exist in the tree, also create it, setting its 
+        parent node to `None`. If a node named "name" *is* already in the tree, simply update its parent node as
+        specified. 
+        
         Parameters:
-            name (string):      the name of this node; must be a unique name from all other nodes!
-            parent (string):    the *name* of the parent node for the node being created; this node must 
-                                already exist in the tree! In other words, add all parent nodes FIRST, and
-                                *then* their children! ########### NEED TO COME BACK TO THIS--MAY NOT WORK FOR MY
-                                INTENDED git-tree USAGE!
+            name (string):      the name of this node; note that only one node by any given name can exist in the 
+                                tree at one time
+            parent (string):    the *name* of the parent node for the node being created; the parent node will be
+                                created if it doesn't already exist in the tree; see "Details" just above
         Returns:
-            NA
+            None
         """
+        
+        ############ PICK BACK UP HERE!
+        
+        # Each node name can only exist *once* in the tree, so first check to make sure this node name isn't already
+        # in the tree!
+        if (name in self.nodeMap):
+            logging.error('Error: this node is already in the tree! name = {}; parent = {}'.format(name, parent))
+            return
+        
+        # Create the parent node if it doesn't exist
         
         # Obtain the parent node using the parent node name if the parent node exists
         parentNode = None
@@ -138,7 +156,7 @@ class Tree:
         newNode = Node(name, parentNode)
         # add the newly-created node to the node map and node list
         self.nodeMap[name] = newNode 
-        self.nodes.append(newNode)
+        self.allNodes.append(newNode)
 
     def printChildren(self):
         """
@@ -149,7 +167,7 @@ class Tree:
         Returns:
             None
         """
-        for node in self.nodes:
+        for node in self.allNodes:
             node.printChildren()
 
     def printTree(self):
@@ -172,7 +190,7 @@ def tests():
     Run some tests to ensure my classes (Node, Tree, etc) are working
     """
     
-    # See if I can duplicate this: https://anytree.readthedocs.io/en/latest/
+    # See if I can duplicate this behavior: https://anytree.readthedocs.io/en/latest/
     
     print('=== Test 1 ===') # WORKS!
     
@@ -195,13 +213,13 @@ def tests():
     print('\n=== Test 2 ===') # WORKS! OUTPUT IS IDENTICAL TO TEST 1!
     
     tree = Tree()
-    tree.addNode("Udo")
-    tree.addNode("Marc", parent="Udo")
-    tree.addNode("Lian", parent="Marc")
-    tree.addNode("Dan", parent="Udo")
-    tree.addNode("Jet", parent="Dan")
-    tree.addNode("Jan", parent="Dan")
-    tree.addNode("Joe", parent="Dan")
+    tree.addOrUpdateNode("Udo")
+    tree.addOrUpdateNode("Marc", parent="Udo")
+    tree.addOrUpdateNode("Lian", parent="Marc")
+    tree.addOrUpdateNode("Dan", parent="Udo")
+    tree.addOrUpdateNode("Jet", parent="Dan")
+    tree.addOrUpdateNode("Jan", parent="Dan")
+    tree.addOrUpdateNode("Joe", parent="Dan")
     tree.printChildren()
 
 def main():
